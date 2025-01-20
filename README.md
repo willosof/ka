@@ -1,4 +1,4 @@
-# KA: Kill All, but Better
+# KA: Killall, but Better
 
 ## 🚀 Introduction
 KA (Kill All) is your ultimate sidekick for managing runaway processes on macOS. If you’ve ever been frustrated by `killall`'s inability to handle applications with numerous sub-processes, KA is here to make your life easier. With an intuitive interface and powerful killing powers, KA turns the chaotic mess of sub-process wrangling into a smooth, interactive killing experience.
