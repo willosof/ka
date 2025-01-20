@@ -15,6 +15,11 @@ import (
 	"golang.org/x/term"
 )
 
+const (
+	greenBgWhiteText = "\033[1;42;37m"
+	resetColor       = "\033[0m"
+)
+
 func main() {
 	// Command-line flags
 	signal := flag.String("s", "", "Signal to send (e.g., -s 9 for SIGKILL)")
@@ -154,10 +159,7 @@ func main() {
 		// Sanitize name and cmdline to remove newlines
 		name = sanitizeString(name)
 		cmdline = sanitizeString(cmdline)
-
-		// Truncate name and cmdline to fit allocated space
-		optionStr := formatOption(pid, name, cmdline, width)
-
+		optionStr := formatOptionWithHighlight(pid, name, cmdline, width, processName)
 		options = append(options, optionStr)
 		pidMap[optionStr] = pid
 	}
@@ -172,12 +174,12 @@ func main() {
 	prompt := &survey.MultiSelect{
 		Message:  "Select processes to kill:",
 		Options:  options,
-		Default:  options, // Pre-select all
+		Default:  options,
 		PageSize: pageSize,
 	}
 	err = survey.AskOne(prompt, &selectedOptions)
 	if err != nil {
-		log.Fatalf("Prompt failed: %v", err)
+		log.Fatalf("%v", err)
 	}
 
 	// Kill selected processes
@@ -192,30 +194,30 @@ func main() {
 	}
 }
 
-func formatOption(pid int, name, cmdline string, width int) string {
-	// Calculate space allocation
-	pidWidth := 8                                 // Fixed width for PID column
-	nameWidth := 25                               // Width for process name
-	cmdWidth := width - pidWidth - nameWidth - 11 // Remaining width for command line
-
+func formatOptionWithHighlight(pid int, name, cmdline string, width int, processName string) string {
+	pidWidth := 8
+	nameWidth := 25
+	cmdWidth := width - pidWidth - nameWidth - 11
 	if cmdWidth < 10 {
-		cmdWidth = 10 // Ensure a minimum width for command line
+		cmdWidth = 10
 	}
 
-	// Truncate name and cmdline to fit allocated space
 	name = truncateString(name, nameWidth)
 	cmdline = truncateString(cmdline, cmdWidth)
 
-	// Build the option string with fixed widths
+	name = highlightText(name, processName)
+	cmdline = highlightText(cmdline, processName)
+
 	optionStr := fmt.Sprintf("%-*d  %-*s  %-*s",
 		pidWidth, pid,
 		nameWidth, name,
 		cmdWidth, cmdline)
 
-	// Ensure the option string doesn't contain newlines
-	optionStr = sanitizeString(optionStr)
+	return sanitizeString(optionStr)
+}
 
-	return optionStr
+func highlightText(text, search string) string {
+	return strings.ReplaceAll(text, search, greenBgWhiteText+search+resetColor)
 }
 
 // truncateString truncates a string to a specified width, adding "..." if truncated
