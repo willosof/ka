@@ -51,7 +51,7 @@ Options:
    ka node
    ```
 
-2. Kill all `chrome` processes immediately with SIGKILL:
+2. Kill all `chrome` processes immediately with `SIGKILL`:
    ```bash
    ka -s 9 -y chrome
    ```
