@@ -194,9 +194,9 @@ func main() {
 
 func formatOption(pid int, name, cmdline string, width int) string {
 	// Calculate space allocation
-	pidWidth := 8  // Fixed width for PID column
-	nameWidth := 25 // Width for process name
-	cmdWidth := width - pidWidth - nameWidth - 10 // Remaining width for command line
+	pidWidth := 8                                 // Fixed width for PID column
+	nameWidth := 25                               // Width for process name
+	cmdWidth := width - pidWidth - nameWidth - 11 // Remaining width for command line
 
 	if cmdWidth < 10 {
 		cmdWidth = 10 // Ensure a minimum width for command line
